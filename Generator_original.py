@@ -23,6 +23,8 @@ class ImageGenerator:
         # loading Number
         file_path = "./num/"
         file_list = os.listdir(file_path)
+        print(file_list)
+
         self.Number = list()
         self.number_list = list()
         for file in file_list:
@@ -116,22 +118,35 @@ class ImageGenerator:
         char = [cv2.resize(char1, (60, 83)) for char1 in self.Char1]
         Plate = cv2.resize(self.plate, (520, 110))
 
+        c = 1
         for i, Iter in enumerate(range(num)):
+            print(i)
             Plate = cv2.resize(self.plate, (520, 110))
-            label = "Z"
+            label = ""
             # row -> y , col -> x
             row, col = 13, 35  # row + 83, col + 56
             # number 1
-            rand_int = random.randint(0, 9)
+            # rand_int = random.randint(0, 9)
+            if c >= 10:
+                rand_int = int(str(c)[0])
+            else:
+                rand_int = 0
             label += self.number_list[rand_int]
             Plate[row:row + 83, col:col + 56, :] = number[rand_int]
             col += 56
 
             # number 2
-            rand_int = random.randint(0, 9)
+            # rand_int = random.randint(0, 9)
+            if c >= 10:
+                rand_int = int(str(c)[1])
+            else:
+                rand_int = c
             label += self.number_list[rand_int]
             Plate[row:row + 83, col:col + 56, :] = number[rand_int]
             col += 56
+
+            c += 1
+            if c > 99: c = 1
 
             # character 3
             label += self.char_list[i%37]
@@ -163,7 +178,8 @@ class ImageGenerator:
             col += 56
             Plate = random_bright(Plate)
             if save:
-                cv2.imwrite(self.save_path + label + ".jpg", Plate)
+                save_image_path = os.path.join(self.save_path, label + ".jpg")
+                cv2.imwrite(save_image_path, Plate)
             else:
                 cv2.imshow(label, Plate)
                 cv2.waitKey(0)
@@ -287,7 +303,8 @@ class ImageGenerator:
             Plate[row:row + 90, col:col + 64, :] = number2[rand_int]
             Plate = random_bright(Plate)
             if save:
-                cv2.imwrite(self.save_path + label + ".jpg", Plate)
+                save_image_path = os.path.join(self.save_path, label + ".jpg")
+                cv2.imwrite(save_image_path, Plate)
             else:
                 cv2.imshow(label, Plate)
                 cv2.waitKey(0)
@@ -423,29 +440,33 @@ class ImageGenerator:
                 cv2.destroyAllWindows()
 
 
-parser = argparse.ArgumentParser()
-parser.add_argument("-i", "--img_dir", help="save image directory",
-                    type=str, default="../CRNN/DB/")
-parser.add_argument("-n", "--num", help="number of image",
-                    type=int)
-parser.add_argument("-s", "--save", help="save or imshow",
-                    type=bool, default=True)
-args = parser.parse_args()
+# parser = argparse.ArgumentParser()
+# parser.add_argument("-i", "--img_dir", help="save image directory",
+#                     type=str, default="../CRNN/DB/")
+# parser.add_argument("-n", "--num", help="number of image",
+#                     type=int)
+# parser.add_argument("-s", "--save", help="save or imshow",
+#                     type=bool, default=True)
+# args = parser.parse_args()
 
 
-img_dir = args.img_dir
+# img_dir = args.img_dir
+img_dir = r"D:\DATA\@car\car_plate\generated\old1"
 A = ImageGenerator(img_dir)
 
-num_img = args.num
-Save = args.save
+# num_img = args.num
+num_img = 10000
+
+# Save = args.save
+Save = True
 
 A.Type_1(num_img, save=Save)
 print("Type 1 finish")
-A.Type_2(num_img, save=Save)
-print("Type 2 finish")
-A.Type_3(num_img, save=Save)
-print("Type 3 finish")
-A.Type_4(num_img, save=Save)
-print("Type 4 finish")
-A.Type_5(num_img, save=Save)
-print("Type 5 finish")
+# A.Type_2(num_img, save=Save)
+# print("Type 2 finish")
+# A.Type_3(num_img, save=Save)
+# print("Type 3 finish")
+# A.Type_4(num_img, save=Save)
+# print("Type 4 finish")
+# A.Type_5(num_img, save=Save)
+# print("Type 5 finish")

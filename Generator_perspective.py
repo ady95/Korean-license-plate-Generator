@@ -7,7 +7,8 @@ def image_augmentation(img, type2=False):
     w, h, _ = img.shape
     pts1 = np.float32([[0, 0], [0, w], [h, 0], [h, w]])
     # 좌표의 이동점
-    begin, end = 30, 90
+    # begin, end = 30, 90
+    begin, end = 10, 60
     pts2 = np.float32([[random.randint(begin, end), random.randint(begin, end)],
                        [random.randint(begin, end), w - random.randint(begin, end)],
                        [h - random.randint(begin, end), random.randint(begin, end)],
@@ -137,27 +138,41 @@ class ImageGenerator:
         number = [cv2.resize(number, (56, 83)) for number in self.Number]
         char = [cv2.resize(char1, (60, 83)) for char1 in self.Char1]
 
+        c = 1
         for i, Iter in enumerate(range(num)):
+            print(i)
             Plate = cv2.resize(self.plate, (520, 110))
             b_width ,b_height = 400, 800
             random_R, random_G, random_B = random.randint(0,255), random.randint(0,255), random.randint(0,255)
             background = np.zeros((b_width, b_height, 3), np.uint8)
             cv2.rectangle(background, (0, 0), (b_height, b_width), (random_R, random_G, random_B), -1)
 
-            label = "Z"
+            label = ""
             # row -> y , col -> x
             row, col = 13, 35  # row + 83, col + 56
+            
             # number 1
-            rand_int = random.randint(0, 9)
+            # rand_int = random.randint(0, 9)
+            if c >= 10:
+                rand_int = int(str(c)[0])
+            else:
+                rand_int = 0
             label += self.number_list[rand_int]
             Plate[row:row + 83, col:col + 56, :] = number[rand_int]
             col += 56
 
             # number 2
-            rand_int = random.randint(0, 9)
+            # rand_int = random.randint(0, 9)
+            if c >= 10:
+                rand_int = int(str(c)[1])
+            else:
+                rand_int = c
             label += self.number_list[rand_int]
             Plate[row:row + 83, col:col + 56, :] = number[rand_int]
             col += 56
+
+            c += 1
+            if c > 99: c = 1
 
             # character 3
             label += self.char_list[i%37]
@@ -193,7 +208,8 @@ class ImageGenerator:
             background = image_augmentation(background)
 
             if save:
-                cv2.imwrite(self.save_path + label + ".jpg", background)
+                save_image_path = os.path.join(self.save_path, label + ".jpg")
+                cv2.imwrite(save_image_path, background)
             else:
                 cv2.imshow(label, background)
                 cv2.waitKey(0)
@@ -482,29 +498,34 @@ class ImageGenerator:
                 cv2.destroyAllWindows()
 
 
-parser = argparse.ArgumentParser()
-parser.add_argument("-i", "--img_dir", help="save image directory",
-                    type=str, default="../CRNN/DB/")
-parser.add_argument("-n", "--num", help="number of image",
-                    type=int)
-parser.add_argument("-s", "--save", help="save or imshow",
-                    type=bool, default=True)
-args = parser.parse_args()
+# parser = argparse.ArgumentParser()
+# parser.add_argument("-i", "--img_dir", help="save image directory",
+#                     type=str, default="../CRNN/DB/")
+# parser.add_argument("-n", "--num", help="number of image",
+#                     type=int)
+# parser.add_argument("-s", "--save", help="save or imshow",
+#                     type=bool, default=True)
+# args = parser.parse_args()
 
 
-img_dir = args.img_dir
+# img_dir = args.img_dir
+# img_dir = r"D:\DATA\@car\carplate_data\aocr_train\generated\2"
+img_dir = r"D:\DATA\@car\car_plate\generated\old2"
 A = ImageGenerator(img_dir)
 
-num_img = args.num
-Save = args.save
+# num_img = args.num
+num_img = 1
+
+# Save = args.save
+Save = True
 
 A.Type_1(num_img, save=Save)
 print("Type 1 finish")
-A.Type_2(num_img, save=Save)
-print("Type 2 finish")
-A.Type_3(num_img, save=Save)
-print("Type 3 finish")
-A.Type_4(num_img, save=Save)
-print("Type 4 finish")
-A.Type_5(num_img, save=Save)
-print("Type 5 finish")
+# A.Type_2(num_img, save=Save)
+# print("Type 2 finish")
+# A.Type_3(num_img, save=Save)
+# print("Type 3 finish")
+# A.Type_4(num_img, save=Save)
+# print("Type 4 finish")
+# A.Type_5(num_img, save=Save)
+# print("Type 5 finish")
